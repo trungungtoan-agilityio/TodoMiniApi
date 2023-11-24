@@ -1,2 +1,14 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cabe06ff_002D8d3d_002D4eb6_002Daaf6_002D1b94aac818d7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetAllTodoItems_ReturnsOkResultOfIEnumerableTodoItems #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::A09D2A8C-2B40-4C31-A869-FF802BFE3176::net8.0::TodoMinimalApiTest.TodoApiTests.GetAllTodoItems_ReturnsOkResultOfIEnumerableTodoItems&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f60c81fb_002D6fed_002D4c98_002D8709_002Ddbc5d730c146/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetAllTodoItems_ReturnsOkResultOfIEnumerableTodoItems" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::A09D2A8C-2B40-4C31-A869-FF802BFE3176::net8.0::TodoMinimalApiTest.TodoApiTests.GetAllTodoItems_ReturnsOkResultOfIEnumerableTodoItems&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::A09D2A8C-2B40-4C31-A869-FF802BFE3176::net8.0::TodoMinimalApiTest.TodoApiIntegrationTests.CreateTodoItem&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::A09D2A8C-2B40-4C31-A869-FF802BFE3176::net8.0::TodoMinimalApiTest.TodoApiTests&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

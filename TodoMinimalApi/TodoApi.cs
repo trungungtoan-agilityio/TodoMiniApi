@@ -20,8 +20,8 @@ public static class TodoApi
 
         return groups;
     }
-    
-    private static async Task<IResult> GetAllTodoItems(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, [FromQuery(Name = "page")] int? page = 1, [FromQuery(Name = "pageSize")] int? pageSize = 10)
+
+    public static async Task<IResult> GetAllTodoItems(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, [FromQuery(Name = "page")] int? page = 1, [FromQuery(Name = "pageSize")] int? pageSize = 10)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         pageSize ??= 10;
@@ -46,21 +46,21 @@ public static class TodoApi
         });
     }
 
-        internal static async Task<IResult> GetTodoItemById(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, int id)
+    public static async Task<IResult> GetTodoItemById(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, int id)
     {
-        using var dbContext = dbContextFactory.CreateDbContext();
-        return await dbContext.TodoItems.FirstOrDefaultAsync(t => t.User.Username == user.FindFirst(ClaimTypes.NameIdentifier)!.Value && t.Id == id) is Todo todo ? TypedResults.Ok(new TodoOutput(todo.Title, todo.IsCompleted, todo.CreatedOn)) : TypedResults.NotFound();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        return await dbContext.TodoItems.FirstOrDefaultAsync(t => t.User.Username == user.FindFirst(ClaimTypes.NameIdentifier)!.Value && t.Id == id) is { } todo ? TypedResults.Ok(new TodoOutput(todo.Title, todo.IsCompleted, todo.CreatedOn)) : TypedResults.NotFound();
     }
 
-    internal static async Task<IResult> CreateTodoItem(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, TodoInput todoItemInput, IValidator<TodoInput> todoItemInputValidator)
+    public static async Task<IResult> CreateTodoItem(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, TodoInput todoItemInput, IValidator<TodoInput> todoItemInputValidator)
     {
-        var validationResult = todoItemInputValidator.Validate(todoItemInput);
+        var validationResult = await todoItemInputValidator.ValidateAsync(todoItemInput);
         if (!validationResult.IsValid)
         {
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         }
 
-        using var dbContext = dbContextFactory.CreateDbContext();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var todoItem = new Todo
         {
             Title = todoItemInput.Title,
@@ -73,32 +73,30 @@ public static class TodoApi
         todoItem.CreatedOn = DateTime.UtcNow;
         dbContext.TodoItems.Add(todoItem);
         await dbContext.SaveChangesAsync();
-        return TypedResults.Created($"/todoitems/{todoItem.Id}", new TodoOutput(todoItem.Title, todoItem.IsCompleted, todoItem.CreatedOn));
+        return TypedResults.Created($"/todos/{todoItem.Id}", new TodoOutput(todoItem.Title, todoItem.IsCompleted, todoItem.CreatedOn));
     }
 
-    internal static async Task<IResult> UpdateTodoItem(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, int id, TodoInput todoItemInput)
+    public static async Task<IResult> UpdateTodoItem(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, int id, TodoInput todoItemInput)
     {
-        using var dbContext = dbContextFactory.CreateDbContext();
-        if (await dbContext.TodoItems.FirstOrDefaultAsync(t => t.User.Username == user.FindFirst(ClaimTypes.NameIdentifier)!.Value && t.Id == id) is Todo todoItem)
-        {
-            todoItem.IsCompleted = todoItemInput.IsCompleted;
-            await dbContext.SaveChangesAsync();
-            return TypedResults.NoContent();
-        }
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        if (await dbContext.TodoItems.FirstOrDefaultAsync(t =>
+                t.User.Username == user.FindFirst(ClaimTypes.NameIdentifier)!.Value && t.Id == id) is not
+            { } todoItem) return TypedResults.NotFound();
+        todoItem.IsCompleted = todoItemInput.IsCompleted;
+        await dbContext.SaveChangesAsync();
+        return TypedResults.NoContent();
 
-        return TypedResults.NotFound();
     }
 
-    internal static async Task<IResult> DeleteTodoItem(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, int id)
+    public static async Task<IResult> DeleteTodoItem(IDbContextFactory<TodoDbContext> dbContextFactory, ClaimsPrincipal user, int id)
     {
-        using var dbContext = dbContextFactory.CreateDbContext();
-        if (await dbContext.TodoItems.FirstOrDefaultAsync(t => t.User.Username == user.FindFirst(ClaimTypes.NameIdentifier)!.Value && t.Id == id) is Todo todoItem)
-        {
-            dbContext.TodoItems.Remove(todoItem);
-            await dbContext.SaveChangesAsync();
-            return TypedResults.NoContent();
-        }
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        if (await dbContext.TodoItems.FirstOrDefaultAsync(t =>
+                t.User.Username == user.FindFirst(ClaimTypes.NameIdentifier)!.Value && t.Id == id) is not
+            { } todoItem) return TypedResults.NotFound();
+        dbContext.TodoItems.Remove(todoItem);
+        await dbContext.SaveChangesAsync();
+        return TypedResults.NoContent();
 
-        return TypedResults.NotFound();
     }
 }
