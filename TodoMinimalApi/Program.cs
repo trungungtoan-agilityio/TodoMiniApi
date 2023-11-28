@@ -173,3 +173,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.Run();
+
+// Just for integration testing
+// Using the new .NET8 Minimal APIs Program.cs format which does not have Program class (nor a namespace) defined
+public partial class Program { }
